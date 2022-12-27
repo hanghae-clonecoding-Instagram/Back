@@ -1,8 +1,11 @@
 package com.example.clone_instagram.dto;
 
 import com.example.clone_instagram.entity.Comment;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class CommentResponseDto {
 
     private Long commentId;

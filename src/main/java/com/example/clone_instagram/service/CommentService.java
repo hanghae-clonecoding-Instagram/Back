@@ -24,6 +24,23 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+
+    @Transactional
+    public CommentListResponseDto getComments(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+        );
+
+        CommentListResponseDto commentListResponseDto = new CommentListResponseDto();
+        List<Comment> comments = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        for(Comment comment2 : comments) {
+            commentListResponseDto.addCommentList(new CommentResponseDto(comment2));
+        }
+
+        return commentListResponseDto;
+
+    }
+
     @Transactional
     public CommentListResponseDto createComment(Long postId, CommentRequestDto requestDto, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
@@ -34,17 +51,17 @@ public class CommentService {
         commentRepository.save(comment);
 
         CommentListResponseDto commentListResponseDto = new CommentListResponseDto();
-        List<Comment> comments = commentRepository.findAllByOrderByModifiedAtDesc();
+        List<Comment> comments = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         for(Comment comment2 : comments) {
             commentListResponseDto.addCommentList(new CommentResponseDto(comment2));
         }
 
-        return new CommentListResponseDto();
+        return commentListResponseDto;
     }
 
     @Transactional
-    public CommentListResponseDto updateComment(Long id, CommentRequestDto requestDto, User user) {
-        Comment comment = commentRepository.findById(id).orElseThrow(
+    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
 
@@ -53,13 +70,7 @@ public class CommentService {
         if (commentWriter.equals(user.getUsername())) {
             comment.update(requestDto);
 
-            CommentListResponseDto commentListResponseDto = new CommentListResponseDto();
-            List<Comment> comments = commentRepository.findAllByOrderByModifiedAtDesc();
-            for(Comment comment2 : comments) {
-                commentListResponseDto.addCommentList(new CommentResponseDto(comment2));
-            }
-
-            return new CommentListResponseDto();
+            return new CommentResponseDto(comment);
 
         } else {
             throw new IllegalArgumentException("댓글 작성자가 아닙니다.");

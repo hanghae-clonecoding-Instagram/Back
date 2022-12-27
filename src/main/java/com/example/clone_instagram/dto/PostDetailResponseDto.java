@@ -21,6 +21,7 @@ public class PostDetailResponseDto {
     private String content;
     private int likePostNum;
     private boolean isLikePost;
+    private int commentNum;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -34,6 +35,7 @@ public class PostDetailResponseDto {
         this.content = post.getContent();
         this.likePostNum = post.getLikePostList().size();
 //        this.isLikePost = post.getLikePost().isLikePost();
+        this.commentNum = post.getCommentList().size();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
 
