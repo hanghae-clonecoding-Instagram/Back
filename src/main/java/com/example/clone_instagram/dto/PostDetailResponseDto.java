@@ -21,11 +21,11 @@ public class PostDetailResponseDto {
     private String content;
     private int likePostNum;
     private boolean isLikePost;
+    private int commentNum;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public PostDetailResponseDto(Post post){
-
+    public PostDetailResponseDto(Post post, boolean likeCheck){
 
         this.postId = post.getId();
         this.profileImage = post.getUser().getProfileImage();
@@ -33,7 +33,8 @@ public class PostDetailResponseDto {
         this.image = post.getImage();
         this.content = post.getContent();
         this.likePostNum = post.getLikePostList().size();
-//        this.isLikePost = post.getLikePost().isLikePost();
+        this.isLikePost = likeCheck;
+        this.commentNum = post.getCommentList().size();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
 

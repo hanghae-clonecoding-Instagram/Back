@@ -29,9 +29,10 @@ public class PostController {
 
     private final S3Uploader s3Uploader;
     @GetMapping("/posts")
-    public PostFeedResponseDto getPosts(){
-        return postService.getPosts();
+    public PostFeedResponseDto getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.getPosts(userDetails.getUser());
     }
+
 
 //    @PostMapping("/post")
 //    public MsgResponseDto createPost(@RequestBody @Valid PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -39,22 +40,25 @@ public class PostController {
 //    }
 
     @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public MsgResponseDto createPost(@RequestPart @Valid PostRequestDto requestDto,
+    public PostDetailResponseDto createPost(@RequestPart @Valid PostRequestDto requestDto,
                                      @RequestPart (value = "file", required = false) MultipartFile multipartFile,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         String imgUrl= s3Uploader.upload(multipartFile, "static");
-
         return postService.createPost(requestDto, imgUrl, userDetails.getUser());
     }
 
     @GetMapping("/post/{id}")
-    public PostDetailResponseDto getPost(@PathVariable Long id) {
-        return postService.getPost(id);
+    public PostDetailResponseDto getPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.getPost(id, userDetails.getUser());
     }
 
-    @PutMapping("/post/{id}")
-    public PostDetailResponseDto  updatePost(@PathVariable Long id, @RequestBody @Valid PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return postService.updatePost(id,requestDto,userDetails.getUser());
+    @PutMapping(value = "/post/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public PostDetailResponseDto  updatePost(@PathVariable Long id,
+                                             @RequestPart @Valid PostRequestDto requestDto,
+                                             @RequestPart (value = "file", required = false) MultipartFile multipartFile,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        String imgUrl= s3Uploader.upload(multipartFile, "static");
+        return postService.updatePost(id,requestDto, imgUrl, userDetails.getUser());
     }
 
     @DeleteMapping("/post/{id}")

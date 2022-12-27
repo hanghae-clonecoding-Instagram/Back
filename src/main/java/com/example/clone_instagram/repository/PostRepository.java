@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findAllByOrderByCreatedAtDesc();
 
     List<Post> findAllByOrderByModifiedAtDesc();
 
@@ -20,4 +19,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByUser(User user);
     int countByUser(User user);
+
 }

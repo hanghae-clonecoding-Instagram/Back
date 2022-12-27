@@ -7,12 +7,14 @@ import com.example.clone_instagram.dto.PostRequestDto;
 import com.example.clone_instagram.entity.Post;
 import com.example.clone_instagram.entity.User;
 import com.example.clone_instagram.entity.UserRoleEnum;
+import com.example.clone_instagram.repository.LikePostRepository;
 import com.example.clone_instagram.repository.PostRepository;
 import com.example.clone_instagram.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,41 +22,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final LikePostRepository likePostRepository;
 
     @Transactional(readOnly = true)
-    public PostFeedResponseDto getPosts() {
+    public PostFeedResponseDto getPosts(User user) {
         PostFeedResponseDto postFeedResponseDto = new PostFeedResponseDto();
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         for(Post post : posts){
-            postFeedResponseDto.addPostFeed(new PostDetailResponseDto(post));
+            boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
+            postFeedResponseDto.addPostFeed(new PostDetailResponseDto(post, likeCheck));
         }
         return postFeedResponseDto;
     }
 
     @Transactional
-    public MsgResponseDto createPost(PostRequestDto requestDto, String imgUrl, User user){
-        Post post = postRepository.saveAndFlush(new Post(requestDto , user, imgUrl));
+    public PostDetailResponseDto createPost(PostRequestDto requestDto, String imgUrl, User user){
+        Post post = postRepository.saveAndFlush(new Post(requestDto,user, imgUrl));
         postRepository.save(post);
-        return new MsgResponseDto("게시글 작성 성공", HttpStatus.OK.value());
+        return new PostDetailResponseDto(post, false);
     }
 
     @Transactional(readOnly = true)
-    public PostDetailResponseDto getPost(Long id){
+    public PostDetailResponseDto getPost(Long id, User user){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
-        return new PostDetailResponseDto(post);
+        boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
+        return new PostDetailResponseDto(post, likeCheck);
     }
 
 
     @Transactional
-    public PostDetailResponseDto updatePost(Long id, PostRequestDto requestDto, User user) {
+    public PostDetailResponseDto updatePost(Long id, PostRequestDto requestDto, String imgUrl, User user) {
         if(postRepository.existsByIdAndUser(id,user)) {
             Post post = postRepository.findByIdAndUser(id, user).orElseThrow(
                     () -> new IllegalArgumentException("해당 게시글이 없습니다.")
             );
-            post.update(requestDto);
-            return new PostDetailResponseDto(post);
+            post.update(requestDto, imgUrl);
+            boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
+            return new PostDetailResponseDto(post, likeCheck);
         }else{
             throw  new IllegalArgumentException("해당 게시글이 없습니다.");
         }
