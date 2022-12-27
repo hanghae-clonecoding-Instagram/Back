@@ -33,14 +33,13 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<LikePost> likePostList = new ArrayList<>();
 
-    public Post(PostRequestDto requestDto, User user) {
-        this.image = requestDto.getImage();
+    public Post(PostRequestDto requestDto, User user, String imgUrl) {
+        this.image = imgUrl;
         this.content = requestDto.getContent();
         this.user = user;
     }
 
     public void update(PostRequestDto requestDto) {
-        this.image = requestDto.getImage();
         this.content = requestDto.getContent();
     }
 

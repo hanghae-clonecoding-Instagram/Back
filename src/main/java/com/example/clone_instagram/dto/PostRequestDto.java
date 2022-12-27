@@ -9,9 +9,6 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class PostRequestDto {
 
-    @NotNull(message = "이미지 url이 없습니다.")
-    private String image;
-
     @NotNull(message = "내용을 입력해주세요.")
     private String content;
 

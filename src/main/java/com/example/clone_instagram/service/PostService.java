@@ -32,8 +32,8 @@ public class PostService {
     }
 
     @Transactional
-    public MsgResponseDto createPost(PostRequestDto requestDto, User user){
-        Post post = postRepository.saveAndFlush(new Post(requestDto,user));
+    public MsgResponseDto createPost(PostRequestDto requestDto, String imgUrl, User user){
+        Post post = postRepository.saveAndFlush(new Post(requestDto , user, imgUrl));
         postRepository.save(post);
         return new MsgResponseDto("게시글 작성 성공", HttpStatus.OK.value());
     }

@@ -24,8 +24,8 @@ public class CommentController {
     }
     //댓글 수정
     @PutMapping("/{commentId}")
-    public CommentListResponseDto updateComment(@PathVariable Long id, @Valid  @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return commentService.updateComment(id, requestDto, userDetails.getUser());
+    public CommentListResponseDto updateComment(@PathVariable Long commentId, @Valid  @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return commentService.updateComment(commentId, requestDto, userDetails.getUser());
     }
     //댓글 삭제
     @DeleteMapping("/{commentId}")

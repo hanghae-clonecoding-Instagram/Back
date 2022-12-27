@@ -9,6 +9,7 @@ import com.example.clone_instagram.entity.Post;
 import com.example.clone_instagram.entity.User;
 import com.example.clone_instagram.entity.UserRoleEnum;
 import com.example.clone_instagram.repository.CommentRepository;
+import com.example.clone_instagram.repository.LikeCommentRepository;
 import com.example.clone_instagram.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final LikeCommentRepository likeCommentRepository;
 
     @Transactional
     public CommentListResponseDto createComment(Long postId, CommentRequestDto requestDto, User user) {
@@ -36,15 +38,16 @@ public class CommentService {
         CommentListResponseDto commentListResponseDto = new CommentListResponseDto();
         List<Comment> comments = commentRepository.findAllByOrderByModifiedAtDesc();
         for(Comment comment2 : comments) {
-            commentListResponseDto.addCommentList(new CommentResponseDto(comment2));
+            boolean likeCheck = likeCommentRepository.existsByUserAndComment(user, comment2);
+            commentListResponseDto.addCommentList(new CommentResponseDto(comment2, likeCheck));
         }
 
-        return new CommentListResponseDto();
+        return commentListResponseDto;
     }
 
     @Transactional
-    public CommentListResponseDto updateComment(Long id, CommentRequestDto requestDto, User user) {
-        Comment comment = commentRepository.findById(id).orElseThrow(
+    public CommentListResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
 
@@ -56,10 +59,11 @@ public class CommentService {
             CommentListResponseDto commentListResponseDto = new CommentListResponseDto();
             List<Comment> comments = commentRepository.findAllByOrderByModifiedAtDesc();
             for(Comment comment2 : comments) {
-                commentListResponseDto.addCommentList(new CommentResponseDto(comment2));
+                boolean likeCheck = likeCommentRepository.existsByUserAndComment(user, comment2);
+                commentListResponseDto.addCommentList(new CommentResponseDto(comment2, likeCheck));
             }
 
-            return new CommentListResponseDto();
+            return commentListResponseDto;
 
         } else {
             throw new IllegalArgumentException("댓글 작성자가 아닙니다.");

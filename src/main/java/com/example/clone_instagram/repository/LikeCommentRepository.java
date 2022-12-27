@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LikeCommentRepository extends JpaRepository<LikeComment, Long> {
     LikeComment findByUserAndComment(User user, Comment comment);
+    boolean existsByUserAndComment(User user, Comment comment);
 }

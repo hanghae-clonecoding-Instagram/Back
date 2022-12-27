@@ -1,8 +1,11 @@
 package com.example.clone_instagram.dto;
 
 import com.example.clone_instagram.entity.Comment;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class CommentResponseDto {
 
     private Long commentId;
@@ -14,14 +17,14 @@ public class CommentResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public CommentResponseDto(Comment comment) {
+    public CommentResponseDto(Comment comment, boolean likeCheck) {
 
         this.commentId = comment.getId();
         this.profileImage = comment.getUser().getProfileImage();
         this.username = comment.getUser().getUsername();
         this.comment = comment.getComment();
         this.likeCmtNum = comment.getLikeCommentList().size();
-//        this.isLikeCmt = comment.getLikeComment().isLikeCmt();
+        this.isLikeCmt = likeCheck;
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
 
