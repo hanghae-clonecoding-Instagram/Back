@@ -17,6 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long kakaoId;
 
     @Column(nullable = false,  unique = true)
     private String username;
@@ -43,11 +44,23 @@ public class User {
         this.password = password;
         this.role = role;
     }
+    public User(String username, Long kakaoId, String encodedpassword, String email, UserRoleEnum role){
+        this.username =username;
+        this.kakaoId = kakaoId;
+        this.password = encodedpassword;
+        this.role = role;
+        this.email = email;
+    }
+
 
     public void updateMypage(String username, String profileImage, String introduction) {
         this.username = username;
         this.profileImage = profileImage;
         this.introduction = introduction;
+    }
+    public User kakaoIdUpdate(Long kakaoId){
+        this.kakaoId = kakaoId;
+        return this;
     }
 
 }
