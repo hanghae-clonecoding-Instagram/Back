@@ -32,7 +32,7 @@ public class CommentService {
     @Transactional
     public CommentListResponseDto getComments(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+                () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
         );
 
         CommentListResponseDto commentListResponseDto = new CommentListResponseDto();

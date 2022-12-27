@@ -25,7 +25,7 @@ public class MypageService {
     public MypageResponseDto getMypage(User user) {
         int postingNum = postRepository.countByUser(user);
         MypageResponseDto mypageResponseDto = new MypageResponseDto(user, postingNum);
-        List<Post> posts =  postRepository.findByUser(user);
+        List<Post> posts =  postRepository.findByUserOrderByCreatedAtDesc(user);;
         for (Post post : posts) {
             mypageResponseDto.addPost(new PostMypageResponseDto(post));
         }

@@ -62,7 +62,7 @@ public class PostService {
             boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
             return new PostDetailResponseDto(post, likeCheck);
         }else{
-            throw  new IllegalArgumentException("해당 게시글이 없습니다.");
+            throw  new IllegalArgumentException("게시물 작성자가 아닙니다.");
         }
 
     }
@@ -84,7 +84,7 @@ public class PostService {
             postRepository.delete(post);
             return  new MsgResponseDto("게시글 삭제 성공",HttpStatus.OK.value());
         }else{
-            throw  new IllegalArgumentException("해당 게시글이 없습니다.");
+            throw  new IllegalArgumentException("게시물 작성자가 아닙니다.");
         }
 
     }

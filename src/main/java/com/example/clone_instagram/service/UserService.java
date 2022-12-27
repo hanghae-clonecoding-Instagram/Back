@@ -46,10 +46,6 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 username 입니다.");
         }
 
-//        if(!passwordEncoder.matches(password, password2)) {
-//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-//        }
-
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()){
             if (!requestDto.getAdminToken().equals(adminToken)) {
