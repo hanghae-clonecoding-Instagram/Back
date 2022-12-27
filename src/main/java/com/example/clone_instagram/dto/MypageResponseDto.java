@@ -1,6 +1,7 @@
 package com.example.clone_instagram.dto;
 
 import com.example.clone_instagram.entity.User;
+import com.example.clone_instagram.repository.PostRepository;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -16,11 +17,12 @@ public class MypageResponseDto {
     private String introduction;
     private List<PostMypageResponseDto> postList = new ArrayList<>();
 
-    public MypageResponseDto(User user) {
+    public MypageResponseDto(User user, int postingNum) {
         this.profileImage = user.getProfileImage();
         this.username = user.getUsername();
-        this.postingNum = user.getPostList().size();
         this.introduction = user.getIntroduction();
-        this.postList = user.getPostList().stream().map(PostMypageResponseDto::new).collect(Collectors.toList());
+        this.postingNum = postingNum;
     }
+
+    public void addPost(PostMypageResponseDto postMypageResponseDto) {postList.add(postMypageResponseDto);}
 }
