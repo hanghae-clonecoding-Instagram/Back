@@ -29,11 +29,6 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "likeComment_id", nullable = false)
-    private LikeComment likeComment;
-
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private List<LikeComment> likeCommentList = new ArrayList<>();
 

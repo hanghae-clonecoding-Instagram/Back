@@ -35,7 +35,6 @@ public class UserService {
         String email = requestDto.getEmail();
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
-//        String password2 = passwordEncoder.encode(requestDto.getPassword2());
 
         boolean isExistEmail = userRepository.existsByEmail(email);
         if (isExistEmail) {
@@ -58,6 +57,7 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
+
 
         User user = new User(email, username, password, role);
         userRepository.save(user);
