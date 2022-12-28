@@ -8,9 +8,9 @@ import java.util.List;
 @Getter
 public class PostFeedResponseDto {
 
-    List<PostDetailResponseDto> postFeed = new ArrayList<>();
+    List<PostMainResponseDto> postFeed = new ArrayList<>();
 
-    public void addPostFeed(PostDetailResponseDto responseDto) {
+    public void addPostFeed(PostMainResponseDto responseDto) {
         postFeed.add(responseDto);
     }
 

@@ -1,36 +1,36 @@
 package com.example.clone_instagram.service;
 
-import com.example.clone_instagram.dto.MsgResponseDto;
-import com.example.clone_instagram.dto.PostDetailResponseDto;
-import com.example.clone_instagram.dto.PostFeedResponseDto;
-import com.example.clone_instagram.dto.PostRequestDto;
+import com.example.clone_instagram.dto.*;
+import com.example.clone_instagram.entity.Comment;
 import com.example.clone_instagram.entity.Post;
 import com.example.clone_instagram.entity.User;
 import com.example.clone_instagram.entity.UserRoleEnum;
+import com.example.clone_instagram.repository.CommentRepository;
 import com.example.clone_instagram.repository.LikePostRepository;
 import com.example.clone_instagram.repository.PostRepository;
-import com.example.clone_instagram.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final LikePostRepository likePostRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public PostFeedResponseDto getPosts(User user) {
         PostFeedResponseDto postFeedResponseDto = new PostFeedResponseDto();
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         for(Post post : posts){
+            Comment latestCmt = commentRepository.findLatestCmt(post.getId()).orElse(null);
             boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
-            postFeedResponseDto.addPostFeed(new PostDetailResponseDto(post, likeCheck));
+            postFeedResponseDto.addPostFeed(new PostMainResponseDto(post, likeCheck, latestCmt));
         }
         return postFeedResponseDto;
     }
