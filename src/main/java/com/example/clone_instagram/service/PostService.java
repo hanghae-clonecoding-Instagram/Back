@@ -53,12 +53,12 @@ public class PostService {
 
 
     @Transactional
-    public PostDetailResponseDto updatePost(Long id, PostRequestDto requestDto, String imgUrl, User user) {
+    public PostDetailResponseDto updatePost(Long id, PostRequestDto requestDto, User user) {
         if(postRepository.existsByIdAndUser(id,user)) {
             Post post = postRepository.findByIdAndUser(id, user).orElseThrow(
                     () -> new IllegalArgumentException("해당 게시글이 없습니다.")
             );
-            post.update(requestDto, imgUrl);
+            post.update(requestDto);
             boolean likeCheck = likePostRepository.existsByUserAndPost(user, post);
             return new PostDetailResponseDto(post, likeCheck);
         }else{

@@ -52,13 +52,9 @@ public class PostController {
         return postService.getPost(id, userDetails.getUser());
     }
 
-    @PutMapping(value = "/post/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public PostDetailResponseDto  updatePost(@PathVariable Long id,
-                                             @RequestPart @Valid PostRequestDto requestDto,
-                                             @RequestPart (value = "file", required = false) MultipartFile multipartFile,
-                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
-        String imgUrl= s3Uploader.upload(multipartFile, "static");
-        return postService.updatePost(id,requestDto, imgUrl, userDetails.getUser());
+    @PutMapping("/post/{id}")
+    public PostDetailResponseDto  updatePost(@PathVariable Long id, @RequestBody @Valid PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        return postService.updatePost(id,requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/post/{id}")
