@@ -21,6 +21,15 @@ public class RestApiExceptionHandler {
         );
     }
 
+    @ExceptionHandler(value = {CustomException.class})
+    public ResponseEntity<Object> userCustomException(CustomException ex) {
+        RestApiException restApiException = new RestApiException();
+        restApiException.setErrorMessage(ex.getErrorMessage());
+        restApiException.setHttpStatusCode(ex.getStatusCode());
+        return new ResponseEntity(restApiException, HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleApiRequestException(MethodArgumentNotValidException ex) {
         RestApiException restApiException = new RestApiException();

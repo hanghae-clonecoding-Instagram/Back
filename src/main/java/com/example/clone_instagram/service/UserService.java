@@ -5,6 +5,8 @@ import com.example.clone_instagram.dto.MsgResponseDto;
 import com.example.clone_instagram.dto.SignupRequestDto;
 import com.example.clone_instagram.entity.User;
 import com.example.clone_instagram.entity.UserRoleEnum;
+import com.example.clone_instagram.exception.CustomException;
+import com.example.clone_instagram.exception.ErrorCode;
 import com.example.clone_instagram.jwt.JwtUtil;
 import com.example.clone_instagram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,18 +40,18 @@ public class UserService {
 
         boolean isExistEmail = userRepository.existsByEmail(email);
         if (isExistEmail) {
-            throw new IllegalArgumentException("이미 존재하는 email입니다.");
+            throw new CustomException(ErrorCode.OVERLAP_EMAIL);
         }
 
         boolean isExistUsername = userRepository.existsByUsername(username);
         if (isExistUsername) {
-            throw new IllegalArgumentException("이미 존재하는 username 입니다.");
+            throw new CustomException(ErrorCode.OVERLAP_USERNAME);
         }
 
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()){
             if (!requestDto.getAdminToken().equals(adminToken)) {
-                throw new IllegalArgumentException("관리자 토큰값이 일치하지 않습니다.");
+                throw new CustomException(ErrorCode.MISMATCH_ADMIN_TOKEN);
             }
             role = UserRoleEnum.ADMIN;
         }
@@ -67,12 +69,12 @@ public class UserService {
         String password = requestDto.getPassword();
         //사용자 확인
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("가입된 email이 없습니다.")
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         //비밀번호 확인
         if(!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.MISMATCH_PASSWORD);
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()));
